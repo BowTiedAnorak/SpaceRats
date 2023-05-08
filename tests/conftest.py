@@ -9,3 +9,7 @@ def isolate(fn_isolation):
 @pytest.fixture(scope="module")
 def token(IridiumToken, accounts):
     return IridiumToken.deploy({'from': accounts[0]})
+
+@pytest.fixture(scope="module")
+def space_rat(SpaceRat, accounts):
+    return SpaceRat.deploy({'from': accounts[0]})
