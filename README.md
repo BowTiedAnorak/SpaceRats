@@ -1,6 +1,6 @@
 Technical Requirements & High Level Contracts Design
 
-- SpaceRat
+- **SpaceRat**
     - ERC721 - PFP NFT Contract
     - Max Supply = 2,000
     - 1,000 Public Supply
@@ -14,16 +14,16 @@ Technical Requirements & High Level Contracts Design
         - No limit per address specified
         - Limited to 1,000
         - Can only be called by Whiltelist Contract
-- IridiumToken
+- **IridiumToken**
     - ERC20 - Token Contract
     - No limit on supply.
     - No initial supply.
     - Can only be minted by Geode & AsteroidMine Contracts.
-- AsteroidMine
+- **AsteroidMine**
     - Staking Contract for SpaceRat NFTs
     - Mints Geodes & Iridium Tokens to stakers.
     - Will eventually need to also consider the Spaceships to determine mining speed.
-- Geode
+- **Geode**
     - ERC1155 - Multiple of the same NFT
     - Minted by AsteroidMines
     - No cap on supply
@@ -31,12 +31,12 @@ Technical Requirements & High Level Contracts Design
         - IridiumToken
         - WhitelistSpot (limited to 1,000)
         - SpaceshipKey
-- WhitelistSpot
+- **WhitelistSpot**
     - ERC1155 - Multiple of the ‘same’ NFT
     - Limited to 1,000
     - Can only be minted by Geode Contract
     - Can be burnt to mint a SpaceRat
-- SpaceshipKey
+- **SpaceshipKey**
     - ERC1155 - Multiple of the ‘same’ NFT.
     - No limit on supply.
     - Will eventually be used to mint a Spaceship NFT when ready.
