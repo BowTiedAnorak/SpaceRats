@@ -4,9 +4,9 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract IridiumToken is ERC20 {
 
-    address owner;
-    address GEODE_CONTRACT;
-    address ASTEROID_CONTRACT;
+    address public owner;
+    address public GEODE_CONTRACT;
+    address public ASTEROID_CONTRACT;
 
     constructor () ERC20("Iridium", "IRI"){
         owner = msg.sender;
@@ -18,8 +18,12 @@ contract IridiumToken is ERC20 {
     }
 
     modifier onlyOwner {
-        require (msg.sender == owner, "Only the owner can call this function");
+        require (msg.sender == owner, "Only the owner can call this function.");
         _;
+    }
+
+    function revokeOwnership() public onlyOwner {
+        owner = address(0);
     }
 
     function setGeodeContract(address _geodeContract) public onlyOwner {
