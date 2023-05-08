@@ -12,4 +12,8 @@ def token(IridiumToken, accounts):
 
 @pytest.fixture(scope="module")
 def space_rat(SpaceRat, accounts):
-    return SpaceRat.deploy({'from': accounts[0]})
+    # Set the following max supplies for testing:
+    # MAX_SUPPLY = 10
+    # PUBLIC_SUPPLY = 5
+    # WHITELIST_SUPPLY = 5
+    return SpaceRat.deploy(10, 5, 5, {'from': accounts[0]})
