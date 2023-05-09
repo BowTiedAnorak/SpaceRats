@@ -1,10 +1,6 @@
 #!/usr/bin/python3
 import brownie
 
-def test_only_owner(accounts, token):
-    with brownie.reverts("Only the owner can call this function."):
-        token.revokeOwnership({'from': accounts[1]})
-
 def test_set_geode_contract(accounts, token):
     original_geode_contract = token.GEODE_CONTRACT()
     token.setGeodeContract(accounts[1], {'from': accounts[0]})
@@ -18,13 +14,6 @@ def test_set_asteroid_contract(accounts, token):
     asteroid_contract = token.ASTEROID_CONTRACT()
     assert asteroid_contract != original_asteroid_contract
     assert asteroid_contract == accounts[1]
-
-def test_revoke_ownership(accounts, token):
-    original_owner = token.owner()
-    token.revokeOwnership({'from': accounts[0]})
-    owner = token.owner()
-    assert original_owner != owner
-    assert owner == "0x0000000000000000000000000000000000000000"
 
 def test_mint(accounts, token):
     original_balance = token.balanceOf(accounts[5])

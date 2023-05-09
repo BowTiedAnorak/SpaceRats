@@ -1,29 +1,18 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract IridiumToken is ERC20 {
+contract IridiumToken is ERC20, Ownable {
 
-    address public owner;
     address public GEODE_CONTRACT;
     address public ASTEROID_CONTRACT;
 
-    constructor () ERC20("Iridium", "IRI"){
-        owner = msg.sender;
-    }
+    constructor () ERC20("Iridium", "IRI") {}
 
     modifier onlyGeodeOrAsteroid {
         require (msg.sender == GEODE_CONTRACT || msg.sender == ASTEROID_CONTRACT, "Only the Geode and Asteroid Contracts can call this function.");
         _;
-    }
-
-    modifier onlyOwner {
-        require (msg.sender == owner, "Only the owner can call this function.");
-        _;
-    }
-
-    function revokeOwnership() public onlyOwner {
-        owner = address(0);
     }
 
     function setGeodeContract(address _geodeContract) public onlyOwner {

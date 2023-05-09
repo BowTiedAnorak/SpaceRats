@@ -2,8 +2,9 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract SpaceRat is ERC721 {
+contract SpaceRat is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     Counters.Counter private _publicCount;
@@ -13,18 +14,15 @@ contract SpaceRat is ERC721 {
     uint256 public WHITELIST_SUPPLY = 1_000;
     
     address public WHITELIST_CONTRACT = address(0);
-    address public owner;
 
     constructor(uint256 _publicSupply, uint256 _whitelistSupply) ERC721("SpaceRat", "SR"){
-        owner = msg.sender;
         PUBLIC_SUPPLY = _publicSupply;
         WHITELIST_SUPPLY = _whitelistSupply;
     }
 
-    function setWhitelistContract(address _whitelistContract) public {
+    function setWhitelistContract(address _whitelistContract) public onlyOwner {
         // Only allow the whitelist contract address to be set once.
         require (WHITELIST_CONTRACT == address(0), "Whitelist Contract Address has already been set.");
-        require (msg.sender == owner, "Only the owner can set the whitelist contract.");
         WHITELIST_CONTRACT = _whitelistContract;
     }
 
