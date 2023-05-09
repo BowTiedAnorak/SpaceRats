@@ -9,16 +9,14 @@ contract SpaceRat is ERC721 {
     Counters.Counter private _publicCount;
     Counters.Counter private _whitelistCount;
 
-    uint256 public MAX_SUPPLY = 2_000;
     uint256 public PUBLIC_SUPPLY = 1_000;
     uint256 public WHITELIST_SUPPLY = 1_000;
     
     address public WHITELIST_CONTRACT = address(0);
     address public owner;
 
-    constructor(uint256 _totalSupply, uint256 _publicSupply, uint256 _whitelistSupply) ERC721("SpaceRat", "SR"){
+    constructor(uint256 _publicSupply, uint256 _whitelistSupply) ERC721("SpaceRat", "SR"){
         owner = msg.sender;
-        MAX_SUPPLY = _totalSupply;
         PUBLIC_SUPPLY = _publicSupply;
         WHITELIST_SUPPLY = _whitelistSupply;
     }
@@ -34,8 +32,7 @@ contract SpaceRat is ERC721 {
         public
         returns (uint256)    
     {
-        require(_tokenIds.current() < MAX_SUPPLY, "Maximum supply reached."); // Not required as the next require & whitelist require will ensure the max_supply isn't breached.
-        require(_publicCount.current()  < PUBLIC_SUPPLY, "Maximum Public mint reached.");
+        require(_publicCount.current() < PUBLIC_SUPPLY, "Maximum Public mint reached.");
         _tokenIds.increment();
         _publicCount.increment();
         
@@ -48,7 +45,6 @@ contract SpaceRat is ERC721 {
         public
         returns (uint256)    
     {
-        require(_tokenIds.current() < MAX_SUPPLY, "Maximum supply reached."); // Not required as the next require & public require will ensure the max_supply isn't breached.
         require(_whitelistCount.current() < WHITELIST_SUPPLY, "Maximum Whitelist mint reached.");
         require(msg.sender == WHITELIST_CONTRACT, "Only the Whitelist Contract can call this function.");
 
