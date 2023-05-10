@@ -41,7 +41,7 @@ contract AsteroidMine is ReentrancyGuard {
 
     constructor(address _iridiumToken, address _geodeNft, address _spaceRatNft) {
         IRIDIUM_TOKEN = IMintableERC20(_iridiumToken);
-        GEODE_NFT = IERC1155(_spaceRatNft);
+        GEODE_NFT = IERC1155(_geodeNft);
         SPACE_RAT_NFT = IERC721(_spaceRatNft);
     }
 
@@ -105,15 +105,37 @@ contract AsteroidMine is ReentrancyGuard {
         claimRewards();
     }
 
-    // TODO: Add the logic to calculate Rewards.
-    // Udpate Rewards based on:
-    //      Number of Rats Staked * Number of seconds since last update.
-    // Update lastUpdated value to 'now'.
+    // Update the reward value a user is owed based on:
+    //      (Number of Rats Staked * Number of seconds since last update) * Spaceship Boost.
+    // Update lastUpdated value to current block timestamp.
+    // The idea is:
+    //  1. A Rat is staked - user rewards will be set to 0.
+    //  2. A second Rat is staked (e.g. 30 seconds later) -
+    //      30 seconds of rewards will be calculated based on a single Rat being staked.
+    //      The Last Updated Timestamp will be updated for the user.
+    //  3. Another Transaction is made that will affect rewards (e.g. staking, withdrawing, claiming)
+    //      The staking of 2 Rats will be calculated based on current timestamp minus previous updated timestamp.
+    //      This value will be added on to the existing value (from previously staking 1 Rat) and stored.
+    //      The LastUpdatedTimestamp will be updated and the process continues.
+    // TODO: Add tests for this.
     modifier updateReward(address user) {
         uint256 userRatsStaked = ratsStaked[user].length;
         uint256 currentReward = userRewards[user];
         uint256 lastReward = userRewardsLastUpdate[user];
+
+        uint256 newReward = userRatsStaked * getSecondsSinceLastUpdated(user);
+        userRewards[user] = currentReward + newReward;
+        userRewardsLastUpdate[user] = block.timestamp;
         _;
+    }
+
+    function getSecondsSinceLastUpdated(address user) public view returns (uint256) {
+        uint256 prevTimestamp = userRewardsLastUpdate[user];
+        if (prevTimestamp > 0) {
+            return block.timestamp - prevTimestamp;
+        } else {
+            return 0;
+        }
     }
 
     event RatsStaked(address indexed user, uint256[] spaceRatIds);
