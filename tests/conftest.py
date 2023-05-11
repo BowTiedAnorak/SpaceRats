@@ -16,3 +16,10 @@ def space_rat(SpaceRat, accounts):
     # PUBLIC_SUPPLY = 5
     # WHITELIST_SUPPLY = 5
     return SpaceRat.deploy(5, 5, {'from': accounts[0]})
+
+@pytest.fixture(scope="module")
+def asteroid_mine(AsteroidMine, accounts, token, space_rat):
+    # TODO: Update 2nd space_rat to geode contract.
+    mine = AsteroidMine.deploy(token, space_rat, space_rat, {'from': accounts[0]})
+    token.setAsteroidContract(mine)
+    return mine
