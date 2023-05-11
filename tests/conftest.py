@@ -23,3 +23,10 @@ def asteroid_mine(AsteroidMine, accounts, token, space_rat):
     mine = AsteroidMine.deploy(token, space_rat, space_rat, {'from': accounts[0]})
     token.setAsteroidContract(mine)
     return mine
+
+@pytest.fixture(scope="module")
+def geode(Geode, accounts, token):
+    deployed_geode = Geode.deploy({"from": accounts[0]})
+    deployed_geode.setIridiumTokenContract(token)
+    token.setGeodeContract(deployed_geode)
+    return deployed_geode

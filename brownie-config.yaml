@@ -12,3 +12,4 @@ reports:
     - ERC721
     - Ownable
     - ReentrancyGuard
+    - ERC1155
