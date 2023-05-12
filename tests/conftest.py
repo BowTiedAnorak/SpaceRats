@@ -30,3 +30,8 @@ def geode(Geode, accounts, token):
     deployed_geode.setIridiumTokenContract(token)
     token.setGeodeContract(deployed_geode)
     return deployed_geode
+
+@pytest.fixture(scope="module")
+def rat_whitelist(SpaceRatWhitelistSpot, accounts):
+    whitelist = SpaceRatWhitelistSpot.deploy(5, {"from": accounts[0]})
+    return whitelist

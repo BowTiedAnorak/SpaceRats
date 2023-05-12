@@ -33,6 +33,7 @@ contract Geode is ERC1155, Ownable {
     function crackOpen() public {
         require (balanceOf(msg.sender, GEODE) > 0, "Caller must have a Geode to open.");
         // TODO: Randomly select a prize (Token, WhitelistSpot or SpaceshipKey)
+        //      Limit minting of WhitelistSpots to 1,000.
         IRIDIUM_TOKEN.mint(msg.sender, 100);
 
         // Burn the Geode

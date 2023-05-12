@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract SpaceRat is ERC721, Ownable {
     using Counters for Counters.Counter;
+    
     Counters.Counter private _tokenIds;
     Counters.Counter private _publicCount;
     Counters.Counter private _whitelistCount;
