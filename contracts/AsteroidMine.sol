@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-import "interfaces/IMintableERC20.sol";
-import "interfaces/IMintableERC1155.sol";
+import "interfaces/IIridiumToken.sol";
+import "interfaces/IGeode.sol";
 
 /**
  * Staking contract for SpaceRat NFTs.
@@ -17,8 +17,8 @@ contract AsteroidMine is ReentrancyGuard, ERC721Holder {
 
     // Variables to store the contract addresses of the NFTs & Tokens the
     // Asteroid Mine will interact with.
-    IMintableERC20 public IRIDIUM_TOKEN;
-    IMintableERC1155 public GEODE_NFT;
+    IIridiumToken public IRIDIUM_TOKEN;
+    IGeode public GEODE_NFT;
     IERC721 public SPACE_RAT_NFT;
 
     // Variables to keep track of state of the contract.
@@ -43,8 +43,8 @@ contract AsteroidMine is ReentrancyGuard, ERC721Holder {
     mapping(address => uint256) public userRewardsLastUpdate;
 
     constructor(address _iridiumToken, address _geodeNft, address _spaceRatNft) {
-        IRIDIUM_TOKEN = IMintableERC20(_iridiumToken);
-        GEODE_NFT = IMintableERC1155(_geodeNft);
+        IRIDIUM_TOKEN = IIridiumToken(_iridiumToken);
+        GEODE_NFT = IGeode(_geodeNft);
         SPACE_RAT_NFT = IERC721(_spaceRatNft);
     }
 

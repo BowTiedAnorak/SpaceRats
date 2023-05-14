@@ -29,8 +29,10 @@ Technical Requirements & High Level Contracts Design
     - No cap on supply
     - Can be cracked open (burnt) for:
         - IridiumToken
-        - WhitelistSpot (limited to 1,000)
-        - SpaceshipKey
+            - 10% chance for 300,000
+            - 88% chance for 50,000
+        - WhitelistSpot (limited to 1,000) - 1% chance
+        - SpaceshipKey - 1% chance + 1% once WhitelistSpots have minted out.
 - **WhitelistSpot**
     - ERC1155 - Multiple of the ‘same’ NFT
     - Limited to 1,000
