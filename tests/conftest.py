@@ -35,3 +35,7 @@ def geode(Geode, accounts, token):
 def rat_whitelist(SpaceRatWhitelistSpot, accounts):
     whitelist = SpaceRatWhitelistSpot.deploy(5, {"from": accounts[0]})
     return whitelist
+
+@pytest.fixture(scope="module")
+def spaceship_key(SpaceshipKey, accounts):
+    return SpaceshipKey.deploy({"from": accounts[0]})

@@ -39,4 +39,5 @@ Technical Requirements & High Level Contracts Design
 - **SpaceshipKey**
     - ERC1155 - Multiple of the ‘same’ NFT.
     - No limit on supply.
+    - Can only be minted by Geode Contract
     - Will eventually be used to mint a Spaceship NFT when ready.
