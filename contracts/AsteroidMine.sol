@@ -1,10 +1,10 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "interfaces/IMintableERC20.sol";
+import "interfaces/IMintableERC1155.sol";
 
 /**
  * Staking contract for SpaceRat NFTs.
@@ -18,7 +18,7 @@ contract AsteroidMine is ReentrancyGuard, ERC721Holder {
     // Variables to store the contract addresses of the NFTs & Tokens the
     // Asteroid Mine will interact with.
     IMintableERC20 public IRIDIUM_TOKEN;
-    IERC1155 public GEODE_NFT;
+    IMintableERC1155 public GEODE_NFT;
     IERC721 public SPACE_RAT_NFT;
 
     // Variables to keep track of state of the contract.
@@ -27,6 +27,8 @@ contract AsteroidMine is ReentrancyGuard, ERC721Holder {
     uint256 public rewardRate = 1;
     // uint256 spaceshipBoostRate = 1;
     
+    uint256 public GEODE_REWARD_AMOUNT = 604_800;
+
     // Variables to keep track of assets staked.
     // Mappings from Address to Token & vice versa.
     mapping(uint256 => address) public stakedAssets;
@@ -42,7 +44,7 @@ contract AsteroidMine is ReentrancyGuard, ERC721Holder {
 
     constructor(address _iridiumToken, address _geodeNft, address _spaceRatNft) {
         IRIDIUM_TOKEN = IMintableERC20(_iridiumToken);
-        GEODE_NFT = IERC1155(_geodeNft);
+        GEODE_NFT = IMintableERC1155(_geodeNft);
         SPACE_RAT_NFT = IERC721(_spaceRatNft);
     }
 
@@ -90,19 +92,30 @@ contract AsteroidMine is ReentrancyGuard, ERC721Holder {
         emit RatsWithdrawn(msg.sender, spaceRatIds);
     }
 
-    // TODO: Needs to determine whether to mint Iridium Tokens or Geodes.
-    function claimRewards() public nonReentrant updateReward(msg.sender) {
+    // If the user has over 604_800 (1 month of staking 1 rat)
+    // Then they can choose whether to mint a Geode or to mint the reward as Iridium Tokens.
+    function claimRewardsAsIridiumTokens() public nonReentrant updateReward(msg.sender) {
         uint256 reward = userRewards[msg.sender];
-        if (reward > 0) {
-            userRewards[msg.sender] = 0;
-            IRIDIUM_TOKEN.mint(msg.sender, reward);
-            emit RewardPaid(msg.sender, reward);
-        }
+        require(reward > 0, "No rewards to claim.");
+        userRewards[msg.sender] = 0;
+        IRIDIUM_TOKEN.mint(msg.sender, reward);
+        emit RewardClaimedAsIridium(msg.sender, reward);
     }
 
+    // A user can use their staking rewards to mine a Geode if they have over a certain threshold.
+    // 604_800 is 1 week of staking 1 Rat
+    function claimRewardsAsGeode() public nonReentrant updateReward(msg.sender) {
+        uint256 reward = userRewards[msg.sender];
+        require(reward >= GEODE_REWARD_AMOUNT, "Not enough rewards to claim a Geode.");
+        userRewards[msg.sender] = reward - GEODE_REWARD_AMOUNT;
+        GEODE_NFT.mint(msg.sender);
+        emit RewardClaimedAsGeode(msg.sender);
+    }
+
+    // Withdraws all staked rats and claims the accrued rewards as Tokens.
     function withdrawAll() external {
         withdrawSpaceRats(ratsStakedIds[msg.sender]);
-        claimRewards();
+        claimRewardsAsIridiumTokens();
     }
 
     // Update the reward value a user is owed based on:
@@ -117,7 +130,6 @@ contract AsteroidMine is ReentrancyGuard, ERC721Holder {
     //      The staking of 2 Rats will be calculated based on current timestamp minus previous updated timestamp.
     //      This value will be added on to the existing value (from previously staking 1 Rat) and stored.
     //      The LastUpdatedTimestamp will be updated and the process continues.
-    // TODO: Add tests for this.
     modifier updateReward(address user) {
         uint256 userRatsStaked = ratsStakedIds[user].length;
         uint256 currentReward = userRewards[user];
@@ -140,5 +152,6 @@ contract AsteroidMine is ReentrancyGuard, ERC721Holder {
 
     event RatsStaked(address indexed user, uint256[] spaceRatIds);
     event RatsWithdrawn(address indexed user, uint256[] spaceRatIds);
-    event RewardPaid(address indexed user, uint256 reward);
+    event RewardClaimedAsIridium(address indexed user, uint256 reward);
+    event RewardClaimedAsGeode(address indexed user);
 }
